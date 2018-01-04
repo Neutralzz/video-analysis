@@ -65,6 +65,15 @@ class VideoHandler(tornado.web.RequestHandler):
             link = self.get_argument('link')
             self.write(queryLink(link))
 
+class H5VideoHandler(tornado.web.RequestHandler):
+    def get(self,input):
+        pass
+
+class H5TaskHandler(tornado.web.RequestHandler):
+    def get(self,input):
+        pass
+
+
 
 if __name__ == '__main__':
     global redis_cli
@@ -78,7 +87,8 @@ if __name__ == '__main__':
     app = tornado.web.Application(
         handlers=[
             (r"/video/(\w+)", VideoHandler),
-            (r"/h5/video/(\w+)",)
+            (r"/h5/video/(\w+)",H5VideoHandler),
+            (r"/h5/task/(\w+)",H5TaskHandler)
         ],
         **settings
     )
