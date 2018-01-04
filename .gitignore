@@ -1,0 +1,4 @@
+/static/video/*.mp4
+/static/cache/*.xml
+/log/*.log
+/config/cookies.sqlite
