@@ -19,7 +19,9 @@ def main():
     while(True):
         task_queue,link = redis_cli.blpop('TASK')
         logfile = log_path + '/' + str(base64.b64encode(link),encoding='utf-8') + '.log'
+        #redis_cli.set('PROCESSING',)
         link = str(link,encoding='utf-8')
+        redis_cli.set('PROCESSING',link)
         #print("you-get --debug -c %s -o %s --format=mp4 \"%s\" > %s 2>&1"%(cookies_path,cache_path,link,logfile))
         return_code = os.system("you-get --debug -c %s -o %s --format=mp4 \"%s\" > %s 2>&1"%(cookies_path,cache_path,link,logfile))
         if return_code == 0:
@@ -43,6 +45,7 @@ def main():
             mv_code = os.system('mv -f \"%s/%s\" \"%s/%s\"'%(cache_path,filename,store_path,filename))
             if mv_code == 0:
                 print("%s process finished."%link)
+                redis_cli.delete('PROCESSING')
             else:
                 # complete it
                 pass

@@ -5,7 +5,7 @@
         <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
         <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <title>Video List</title>
+    <title>Task Add</title>
 
     </head>
 
@@ -25,11 +25,19 @@
             </div>
         </nav>
         <div class="container">
-            {% for video_name,video_url in videos %}
             <div class="row">
-                <a href="{{ video_url }}">{{ video_name }}</a>
+                <form class="form-horizontal" role="form" action="/video/newtab" method="get">
+                    <div class="form-group">
+                        <div class="col-md-10 col-xs-10">
+                                <label class="sr-only">URL:</label>
+                                <input type="text" class="form-control" name="link" placeholder="请输入URL">
+                        </div>
+                        <div class="col-md-2 col-xs-2">
+                            <button type="submit" class="btn btn-default">提交</button>
+                        </div>
+                    </div>
+                </form>
             </div>
-            {% end %}
         </div>
     </body>
 </html>

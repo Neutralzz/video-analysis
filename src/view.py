@@ -8,13 +8,16 @@ import tornado.web
 import json
 import redis
 import base64
+import urllib
 
 from tornado.options import define, options
 define("port", default=8000, help="run on the given port", type=int)
 
 
-global redis_cli,log_path
+global redis_cli,log_path,store_path,store_url
 log_path = '../log'
+store_path = '../static/video'
+store_url = '/static/video'
 
 def addNewLink(link):
     global redis_cli
@@ -49,12 +52,25 @@ def queryLink(link):
         else:
             return rate+'\t'+speed
 
+def urlEncode(url):
+    return urllib.parse.quote(url)
+
+def urlDecode(url):
+    return urllib.parse.unquote(url)
+
+
 class VideoHandler(tornado.web.RequestHandler):
     def get(self,input):
+        global store_path,store_url
         if input == "list":
             self.set_header('Content-Type', 'application/json; charset=UTF-8')
-            L = os.listdir('../static/video')
-            self.write(json.dumps(L))
+            L = os.listdir(store_path)
+            res = []
+            for item in L:
+                if item == '.gitkeep':
+                    continue
+                res.append([item,store_url+'/'+urlEncode(item)])
+            self.write(json.dumps(res))
         elif input == "newtab":
             link = self.get_argument('link')
             if addNewLink(link):
@@ -67,11 +83,37 @@ class VideoHandler(tornado.web.RequestHandler):
 
 class H5VideoHandler(tornado.web.RequestHandler):
     def get(self,input):
-        pass
+        global store_path,store_url
+        if input == "list":
+            L = os.listdir(store_path)
+            res = []
+            for item in L:
+                if item == '.gitkeep':
+                    continue
+                res.append([item,'/h5/video/watch?vname='+urlEncode(item)])
+            self.render('index.html',videos=res)
+        elif input == "watch":
+            vname = self.get_argument('vname')
+            video_url = store_url+'/'+vname
+            video_name = vname.split('.')[0]
+            video_type = vname.split('.')[1]
+            self.render('watch.html',video_name=video_name,video_url=urlEncode(video_url),video_type=video_type)
 
 class H5TaskHandler(tornado.web.RequestHandler):
     def get(self,input):
-        pass
+        if input == "add":
+            self.render('task-add.html')
+        elif input == "list":
+            task_list = list(redis_cli.lrange("TASK",0,-1))
+            res = []
+            if redis_cli.exists('PROCESSING'):
+                proc = str(redis_cli.get('PROCESSING'),encoding='utf-8')
+                res.append([proc,queryLink(proc).split('\t')[0]])
+            else:
+                res.append(["None","0%"])
+            for item in task_list:
+                res.append([str(item,encoding='utf-8'),'0%'])
+            self.render('task-list.html',tasks = res)
 
 
 
