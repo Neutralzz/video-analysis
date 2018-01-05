@@ -25,20 +25,12 @@ def main():
         #print("you-get --debug -c %s -o %s --format=mp4 \"%s\" > %s 2>&1"%(cookies_path,cache_path,link,logfile))
         return_code = os.system("you-get --debug -c %s -o %s --format=mp4 \"%s\" > %s 2>&1"%(cookies_path,cache_path,link,logfile))
         if return_code == 0:
-            title = ""
+            filename = ""
             f = open(logfile,'r')
             for line in f:
-                if 'title' in line:
-                    flag = False
-                    for i in range(6,len(line)):
-                        if (not flag) and line[i] == ' ':
-                            continue
-                        else:
-                            flag = True
-                            if line[i] != '\n':
-                                title += line[i]
+                if 'Downloading' in line:
+                    filename = line[12:-5]
                     break
-            filename = title + '.mp4'
             print("filename = %s"%filename)
             f.close()
 
