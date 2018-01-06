@@ -45,7 +45,17 @@ def main():
 
         else:
             # complete it 
-            pass
+            redis_cli.delete('PROCESSING')
+            f = open(logfile,'r')
+            flag = False
+            for line in f:
+                if 'Downloading' in line:
+                    flag = True
+                    break
+            if flag:
+                redis_cli.rpush("TASK",link)
+
+
 
 
         time.sleep(5)
