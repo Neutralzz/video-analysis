@@ -9,6 +9,7 @@ import json
 import redis
 import base64
 import urllib
+import time
 
 from tornado.options import define, options
 define("port", default=8000, help="run on the given port", type=int)
@@ -59,12 +60,18 @@ def urlDecode(url):
     return urllib.parse.unquote(url)
 
 
+def file_key(x):
+    global store_path
+    cx = time.localtime(os.path.getctime(store_path+'/'+x))
+    return cx
+
 class VideoHandler(tornado.web.RequestHandler):
     def get(self,input):
         global store_path,store_url
         if input == "list":
             self.set_header('Content-Type', 'application/json; charset=UTF-8')
             L = os.listdir(store_path)
+            L.sort(key=file_key,reverse=True)
             res = []
             for item in L:
                 if item == '.gitkeep':
@@ -86,6 +93,7 @@ class H5VideoHandler(tornado.web.RequestHandler):
         global store_path,store_url
         if input == "list":
             L = os.listdir(store_path)
+            L.sort(key=file_key,reverse=True)
             res = []
             for item in L:
                 if item == '.gitkeep':
