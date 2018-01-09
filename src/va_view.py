@@ -123,7 +123,9 @@ class H5TaskHandler(tornado.web.RequestHandler):
                 res.append([str(item,encoding='utf-8'),'0%'])
             self.render('task-list.html',tasks = res)
 
-
+class H5ParsingHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.render('parsing.html')
 
 if __name__ == '__main__':
     global redis_cli
@@ -138,7 +140,8 @@ if __name__ == '__main__':
         handlers=[
             (r"/video/(\w+)", VideoHandler),
             (r"/h5/video/(\w+)",H5VideoHandler),
-            (r"/h5/task/(\w+)",H5TaskHandler)
+            (r"/h5/task/(\w+)",H5TaskHandler),
+            (r"/h5/parsing/",H5ParsingHandler)
         ],
         **settings
     )

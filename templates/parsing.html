@@ -5,7 +5,7 @@
         <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
         <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <title>Task Add</title>
+    <title>Onling Parsing</title>
 
     </head>
 
@@ -39,14 +39,19 @@
                     </div>
                 </form>
             </div>
+            
+            <iframe src="" width="91%" height="80%" style="border: 0px;">
+            </iframe>
         </div>
         <script type="text/javascript">
             function submit_link(){
                 var link = $("#link").val();
-                var url = "/video/newtab?link="+link;
-                $.get(url,function(data,status){
-                    alert(data)
-                });
+                var prefix = "";
+                if(link.indexOf("youku") >= 0)
+                    prefix = "https://jiexi.071811.cc/jx.php?url="
+                else
+                    prefix = "http://jx.api.163ren.com/vod.php?url="
+                $("iframe").attr("src",prefix+link)
             }
         </script>
     </body>
